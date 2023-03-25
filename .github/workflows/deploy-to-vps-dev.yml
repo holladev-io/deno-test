@@ -10,10 +10,15 @@ jobs:
         uses: actions/checkout@v3
       
       # - name: NPM Install
-      #   run: npm install
+      #   run: npm install      
 
       - name: Deno Install
-        run: curl -fsSL https://deno.land/x/install/install.sh | sh
+        run: |
+          apt install unzip
+          curl -fsSL https://deno.land/x/install/install.sh | sh
+
+      - name: Deno Version
+        run:  deno --version
 
       - name: Deno Build
         run: deno compile --allow-read --allow-net --output dest/app main.ts
