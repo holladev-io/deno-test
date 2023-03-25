@@ -31,7 +31,7 @@ jobs:
         run:  deno -V
 
       - name: Deno Build
-        run: deno compile --allow-read --allow-net --output dest/app main.ts
+        run: deno compile --allow-read --allow-net --output dist/app main.ts
 
       
 
