@@ -12,10 +12,11 @@ jobs:
       # - name: NPM Install
       #   run: npm install      
 
+      - name: Unzip Install
+        run: apt install unzip
+      
       - name: Deno Install
-        run: |
-          apt install unzip
-          curl -fsSL https://deno.land/x/install/install.sh | sh
+        run: curl -fsSL https://deno.land/x/install/install.sh | sh
 
       - name: Deno Version
         run:  deno --version
