@@ -1,0 +1,40 @@
+name: Deploy To VPS
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v3
+      
+      - name: NPM Install
+        run: npm install
+
+      - name: Deno Install
+        run: curl -fsSL https://deno.land/x/install/install.sh | sh
+
+      - name: Deno Build
+        run: deno compile --allow-read --allow-net --output dest/app main.ts
+
+      - name: Install SSH Private Key # https://stackoverflow.com/a/70447517
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY_LOCAL }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+
+      - name: Deploy via Rsync
+        uses: burnett01/rsync-deployments@5.2.1
+        with:
+          switches: -avzr --delete
+          path: dist/ # The source path. Defaults to GITHUB_WORKSPACE and is relative to it
+          remote_path: ${{ secrets.WORK_DIR }} # /var/www/<host_name>/html/
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_port: 22 # Defaults to 22
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY_LOCAL }}
+          remote_key_pass: ${{ secrets.SSH_PRIVATE_KEY_PASSPHRASE }} # The remote ssh key passphrase (if any)
+
+      - name: Remove Private Key
+        run: rm -rf ~/.ssh
