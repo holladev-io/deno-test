@@ -8,6 +8,12 @@ jobs:
     steps:
       - name: Clone Repository
         uses: actions/checkout@v3
+
+      - name: Install SSH Private Key # https://stackoverflow.com/a/70447517
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY_LOCAL }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
       
       # - name: NPM Install
       #   run: npm install      
@@ -27,11 +33,7 @@ jobs:
       - name: Deno Build
         run: deno compile --allow-read --allow-net --output dest/app main.ts
 
-      - name: Install SSH Private Key # https://stackoverflow.com/a/70447517
-        run: |
-          install -m 600 -D /dev/null ~/.ssh/id_rsa
-          echo "${{ secrets.SSH_PRIVATE_KEY_LOCAL }}" > ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+      
 
       - name: Deploy via Rsync
         uses: burnett01/rsync-deployments@5.2.1
