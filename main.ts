@@ -16,5 +16,5 @@ const app = new Application();
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-console.log("Listen on http://localhost:8080")
-app.listen({ hostname: 'dev.scalatrades.com', port: 8080 });
+console.log("Listen on http://localhost:3000")
+app.listen({ port: 3000 });
