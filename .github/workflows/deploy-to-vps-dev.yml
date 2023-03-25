@@ -13,7 +13,7 @@ jobs:
       #   run: npm install      
 
       - name: Unzip Install
-        run: apt install unzip
+        run: sudo apt install unzip
       
       - name: Deno Install
         run: curl -fsSL https://deno.land/x/install/install.sh | sh
